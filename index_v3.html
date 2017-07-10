@@ -1,0 +1,53 @@
+<html>
+  <head>
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+  </head>
+  <body>
+    <svg id="svg_donut" width="600" height="400">
+      <text id="percentage" x="285" y="205" fill="black" textAnchor="middle" fontSize="18px">75%</text>
+    </svg>
+    <script>
+      var diagram = d3.select('#svg_donut');
+      // var arc = d3.svg.arc().innerRadius(30).outerRadius(50).startAngle(0).endAngle(2 * Math.PI);
+      // var arc1 = d3.svg.arc().innerRadius(50).outerRadius(70).startAngle(0).endAngle(1.2 * Math.PI);
+      // var arc2 = d3.svg.arc().innerRadius(70).outerRadius(90).startAngle(0).endAngle(0.6 * Math.PI);
+
+      // donut
+      diagram.append('path').attr('transform', 'translate(300,200)').attr('fill', 'aquamarine')
+      .transition().duration(5000).tween("animation", function() {
+        return arcAnimation(this, 30, 50, 0, 2)
+      });
+      diagram.append('path').attr('transform', 'translate(300,200)').attr('fill', 'cadetblue')
+      .transition().duration(5000).tween("animation", function() {
+        return arcAnimation(this, 50, 70, 0, 1.2)
+      });
+      diagram.append('path').attr('transform', 'translate(300,200)').attr('fill', 'turquoise')
+      .transition().duration(5000).tween("animation", function() {
+        return arcAnimation(this, 70, 90, 0, 0.6)
+      });
+      // text
+      d3.select('#percentage').transition()
+      .duration(5000)
+      .tween("number", function() {
+        var i = d3.interpolateRound(0, 100);
+        return function(t) {
+          this.textContent = i(t) + '%';
+        };
+      });
+      // funcs
+      function arcAnimation(target, inner, outer, start, end) {
+        const node = d3.select(target);
+        return function(t) {
+          node.attr({
+            d: d3.svg.arc()({ /* 每次內插都重新設定形狀 */
+              innerRadius: inner,
+              outerRadius: outer,
+              startAngle: start,
+              endAngle: end * t * Math.PI /* t = 0 -> 1 */
+            })
+          });
+        }
+      }
+    </script>
+  </body>
+</html>
